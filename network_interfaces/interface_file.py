@@ -74,6 +74,15 @@ class InterfacesFile(object):
     def find_iface(self, name):
         return [iface for iface in self.interfaces if iface.name.index(name)]
 
+    def add_iface(self, iface):
+        if iface.name in [x.name for x in self.interfaces + self.mappings]:
+            raise KeyError("interface definition already exists")
+
+        if isinstance(iface, Iface):
+            self.interfaces.append(iface)
+        elif isinstance(iface, Mapping):
+            self.mappings.append(iface)
+
     def get_iface(self, name):
         result = [iface for iface in self.interfaces + self.mappings if iface.name == name]
         if result:
@@ -122,6 +131,27 @@ class InterfacesFile(object):
             dirname = directory if directory else os.path.abspath(os.path.dirname(filename))
             for sub_file in self.sub_files:
                 sub_file.save(recursive=recursive, directory=dirname)
+
+    def as_string(self, validate=True, allow_correction=True):
+        content = list()
+
+        if validate:
+            self.validate(allow_correction=allow_correction)
+
+        content.append(self.header)
+        for iface in self.interfaces:
+            content.append('\n')
+            content.append(repr(iface))
+
+        for mapping in self.mappings:
+            content.append('\n')
+            content.append(repr(mapping))
+
+        for source in self.sources:
+            content.append('\n')
+            content.append(repr(source))
+
+        return ''.join(content)
 
     def __hash__(self):
         result = 0
