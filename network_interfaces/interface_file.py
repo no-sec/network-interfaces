@@ -2,6 +2,7 @@
 import re
 import os.path
 import shutil
+import glob
 from .constants import DEFAULT_HEADER
 from .stanza import Stanza
 from .source import SourceDirectory, Source
@@ -63,7 +64,8 @@ class InterfacesFile(object):
                              if os.path.isfile(os.path.join(self.dirname, d, f)) and
                              re.match('^[a-zA-Z0-9_-]+$', f)]
             else:
-                subfiles.append((i.source_filename, i))
+                for f in glob.glob(i.source_filename):
+                    subfiles.append((f, i))
 
         for subfile in subfiles:
             self.sub_files.append(InterfacesFile(subfile[0], source=subfile[1]))
