@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from .helpers import clean_list, list_hash
+from six import string_types
 __author__ = 'vahid'
 
 class Stanza(object):
@@ -86,7 +87,7 @@ class MultilineStanza(Stanza):
         return self.__getitem_internal(item) is not None
 
     def __getitem__(self, item):
-        if not isinstance(item, basestring):
+        if not isinstance(item, string_types):
             raise TypeError(type(item))
         result = self.__getitem_internal(item)
         if not result:
@@ -94,7 +95,7 @@ class MultilineStanza(Stanza):
         return ' '.join(result[1:])
 
     def __setitem__(self, key, value):
-        if not isinstance(key, basestring):
+        if not isinstance(key, string_types):
             raise TypeError(type(key))
         values = re.split('\s', value)
 
@@ -106,7 +107,7 @@ class MultilineStanza(Stanza):
             cells += values
 
     def __delitem__(self, item):
-        if not isinstance(item, basestring):
+        if not isinstance(item, string_types):
             raise TypeError(type(item))
         self.__delitem_internal(item)
 
